@@ -1,0 +1,446 @@
+/* === MODERN DESIGN SYSTEM === */
+:root {
+    --primary: #000000;
+    --secondary: #6B7280;
+    --accent: #3B82F6;
+    --success: #10B981;
+    --danger: #EF4444;
+    --warning: #F59E0B;
+    --light-bg: #F9FAFB;
+    --card-bg: #FFFFFF;
+    --border: #E5E7EB;
+    --text-primary: #111827;
+    --text-secondary: #6B7280;
+    --shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.1);
+    --radius: 12px;
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Dark Mode Variables */
+[data-theme="dark"] {
+    --primary: #FFFFFF;
+    --light-bg: #111827;
+    --card-bg: #1F2937;
+    --border: #374151;
+    --text-primary: #F9FAFB;
+    --text-secondary: #9CA3AF;
+    --shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+/* === RESET & BASE === */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--light-bg);
+    color: var(--text-primary);
+    line-height: 1.6;
+    transition: var(--transition);
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+    transition: var(--transition);
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* === INVISIBLE UI NAVBAR === */
+.navbar-modern {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    padding: 0.5rem 0;
+    height: auto;
+}
+
+[data-theme="dark"] .navbar-modern {
+    background: rgba(31, 41, 55, 0.8);
+}
+
+
+.nav-link {
+    font-size: 0.95rem;
+    font-weight: 500;
+    padding: 0.5rem 1rem !important;
+    border-radius: 8px;
+    transition: var(--transition);
+}
+
+/* === ACTIVE MENU HIGHLIGHT (MAROON) === */
+.nav-link.active {
+    color: #800000 !important; /* Warna Maroon */
+    background-color: rgba(128, 0, 0, 0.08); /* Background Maroon transparan tipis */
+    font-weight: 700; /* Tebalkan teks */
+    border-radius: 8px;
+}
+
+/* Dark mode adjustment (Optional) */
+[data-theme="dark"] .nav-link.active {
+    color: #ff9999 !important; /* Merah muda terang agar terbaca di dark mode */
+    background-color: rgba(255, 153, 153, 0.1);
+}
+
+.nav-link:hover {
+    background: var(--light-bg);
+}
+
+/* Search Bar Modern */
+.search-modern {
+    position: relative;
+    max-width: 500px;
+}
+
+.search-modern input {
+    border: 2px solid var(--border);
+    border-radius: 50px;
+    padding: 0.75rem 1.5rem 0.75rem 3rem;
+    font-size: 0.95rem;
+    transition: var(--transition);
+    background: var(--card-bg);
+}
+
+.search-modern input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.search-modern i {
+    position: absolute;
+    left: 1.2rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-secondary);
+}
+
+/* Cart Badge */
+.cart-badge {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: var(--danger);
+    color: white;
+    border-radius: 50%;
+    padding: 2px 6px;
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+
+.hero-modern {
+    padding: 4rem 0;
+    text-align: center;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+    color: white;
+    border-radius: 0 0 30px 30px;
+    margin-bottom: 3rem;
+}
+
+.hero-modern h1 {
+    font-size: 3.5rem;
+    font-weight: 800;
+    letter-spacing: -2px;
+    margin-bottom: 1rem;
+}
+
+.hero-modern p {
+    font-size: 1.2rem;
+    opacity: 0.9;
+}
+
+/* === BENTO GRID LAYOUT === */
+.bento-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+}
+
+/* Product Card Modern */
+.product-card {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    transition: var(--transition);
+    cursor: pointer;
+    border: 1px solid var(--border);
+}
+
+.product-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+}
+
+.product-card-img {
+    width: 100%;
+    height: 280px;
+    object-fit: cover;
+    transition: var(--transition);
+}
+
+.product-card:hover .product-card-img {
+    transform: scale(1.05);
+}
+
+.product-card-body {
+    padding: 1.25rem;
+}
+
+.product-category {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.product-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0.5rem 0;
+    color: var(--text-primary);
+}
+
+.product-price {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary);
+    margin: 0.5rem 0;
+}
+
+.product-location {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+/* Badge Kondisi */
+.badge-condition {
+    display: inline-block;
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-top: 0.5rem;
+}
+
+.condition-new { background: #DCFCE7; color: #166534; }
+.condition-like-new { background: #DBEAFE; color: #1E40AF; }
+.condition-good { background: #FEF3C7; color: #92400E; }
+.condition-fair { background: #FEE2E2; color: #991B1B; }
+
+/* === BUTTONS MODERN === */
+.btn-modern {
+    padding: 0.75rem 2rem;
+    border-radius: 50px;
+    font-weight: 600;
+    border: none;
+    transition: var(--transition);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-primary-modern {
+    background: var(--primary);
+    color: white;
+}
+
+.btn-primary-modern:hover {
+    background: #1F2937;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.btn-outline-modern {
+    background: transparent;
+    border: 2px solid var(--primary);
+    color: var(--primary);
+}
+
+.btn-outline-modern:hover {
+    background: var(--primary);
+    color: white;
+}
+
+/* Sticky Add to Cart */
+.sticky-cart {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    padding: 1rem;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+    display: none;
+    z-index: 999;
+}
+
+@media (max-width: 768px) {
+    .sticky-cart {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+}
+
+/* === DRAWER CART === */
+.cart-drawer {
+    position: fixed;
+    top: 0;
+    right: -400px;
+    width: 400px;
+    height: 100vh;
+    background: var(--card-bg);
+    box-shadow: -4px 0 20px rgba(0, 0, 0, 0.1);
+    z-index: 9999;
+    transition: right 0.3s ease;
+    overflow-y: auto;
+}
+
+.cart-drawer.active {
+    right: 0;
+}
+
+.cart-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 9998;
+    display: none;
+}
+
+.cart-overlay.active {
+    display: block;
+}
+
+/* === SKELETON LOADING === */
+.skeleton {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+    border-radius: var(--radius);
+}
+
+@keyframes loading {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+.skeleton-img {
+    width: 100%;
+    height: 280px;
+}
+
+.skeleton-text {
+    height: 20px;
+    margin: 10px 0;
+}
+
+/* === DARK MODE TOGGLE === */
+.theme-toggle {
+    background: var(--card-bg);
+    border: 2px solid var(--border);
+    border-radius: 50px;
+    padding: 0.5rem;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.theme-toggle:hover {
+    transform: scale(1.1);
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 768px) {
+    .hero-modern h1 {
+        font-size: 2rem;
+    }
+    
+    .bento-grid {
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 1rem;
+    }
+    
+    .cart-drawer {
+        width: 100%;
+        right: -100%;
+    }
+}
+
+/* === UTILITY CLASSES === */
+.text-gradient {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    /* -webkit-background-clip: text; */
+    -webkit-text-fill-color: transparent;
+}
+
+.glassmorphism {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* === ANIMATIONS === */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in-up {
+    animation: fadeInUp 0.6s ease;
+}
+
+/* === TOAST NOTIFICATION === */
+.toast-modern {
+    position: fixed;
+    top: 100px;
+    right: 20px;
+    background: var(--card-bg);
+    padding: 1rem 1.5rem;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-lg);
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    animation: slideInRight 0.3s ease;
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(400px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
