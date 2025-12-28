@@ -2,7 +2,7 @@
 :root {
     --primary: #000000;
     --secondary: #6B7280;
-    --accent: #3B82F6;
+    --accent: #C6AD96;
     --success: #10B981;
     --danger: #EF4444;
     --warning: #F59E0B;
@@ -143,7 +143,7 @@ img {
 .hero-modern {
     padding: 4rem 0;
     text-align: center;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+    background: linear-gradient(135deg, #8e0413 0%, #1a1a1a 100%); 
     color: white;
     border-radius: 0 0 30px 30px;
     margin-bottom: 3rem;
@@ -391,8 +391,8 @@ img {
 
 /* === UTILITY CLASSES === */
 .text-gradient {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    /* -webkit-background-clip: text; */
+    background: linear-gradient(135deg, #F1F0E4 0%, #e78a82 100%);
+    background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 
@@ -443,4 +443,18 @@ img {
         transform: translateX(0);
         opacity: 1;
     }
+}
+
+/* Sembunyikan Input Quantity jika masih ada sisa CSS lama */
+.cart-drawer input[type="number"],
+.cart-drawer .input-group {
+    display: none !important;
+}
+
+/* Rapikan tampilan item wishlist di drawer */
+.cart-drawer .p-3 {
+    transition: background 0.2s;
+}
+.cart-drawer .p-3:hover {
+    background-color: var(--light-bg);
 }

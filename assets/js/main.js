@@ -14,7 +14,7 @@ if (themeToggle) {
     });
 }
 
-// === CART FUNCTIONALITY ===
+// === WISHLIST / CART MANAGER ===
 class CartManager {
     constructor() {
         this.cartDrawer = document.getElementById('cart-drawer');
@@ -23,7 +23,6 @@ class CartManager {
         this.closeCartBtn = document.getElementById('close-cart');
         this.cartItemsContainer = document.getElementById('cart-items');
         this.cartCount = document.getElementById('cart-count');
-        this.cartTotal = document.getElementById('cart-total');
         
         this.init();
     }
@@ -67,55 +66,47 @@ class CartManager {
             const data = await response.json();
             
             if (data.success) {
-                this.renderCart(data.items, data.total);
+                // Total tidak lagi digunakan di Wishlist mode
+                this.renderCart(data.items);
             }
         } catch (error) {
             console.error('Error loading cart:', error);
         }
     }
     
-    renderCart(items, total) {
+    renderCart(items) {
         if (!this.cartItemsContainer) return;
         
         if (items.length === 0) {
             this.cartItemsContainer.innerHTML = `
                 <div class="text-center py-5">
-                    <i class="bi bi-cart-x" style="font-size: 3rem; color: #ccc;"></i>
-                    <p class="mt-3 text-muted">Keranjang kosong</p>
+                    <i class="bi bi-heart-break text-muted" style="font-size: 3rem;"></i>
+                    <p class="mt-3 text-muted">Belum ada barang disukai</p>
                 </div>
             `;
-            if (this.cartTotal) this.cartTotal.textContent = 'Rp 0';
             return;
         }
         
+        // --- LOGIC BARU: Hapus tombol + dan - ---
         this.cartItemsContainer.innerHTML = items.map(item => `
             <div class="cart-item p-3 border-bottom" data-cart-id="${item.id}">
-                <div class="d-flex gap-3">
+                <div class="d-flex gap-3 align-items-center">
                     <img src="${item.image}" alt="${item.name}" 
-                         style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px;">
+                         style="width: 70px; height: 70px; object-fit: cover; border-radius: 8px;">
+                    
                     <div class="flex-grow-1">
-                        <h6 class="mb-1">${item.name}</h6>
-                        <p class="text-muted small mb-2">Rp ${parseInt(item.price).toLocaleString('id-ID')}</p>
-                        <div class="d-flex align-items-center gap-2">
-                            <button class="btn btn-sm btn-outline-secondary" onclick="cart.updateQuantity(${item.id}, ${item.quantity - 1})">
-                                <i class="bi bi-dash"></i>
-                            </button>
-                            <span class="px-3">${item.quantity}</span>
-                            <button class="btn btn-sm btn-outline-secondary" onclick="cart.updateQuantity(${item.id}, ${item.quantity + 1})">
-                                <i class="bi bi-plus"></i>
-                            </button>
-                            <button class="btn btn-sm btn-outline-danger ms-auto" onclick="cart.removeItem(${item.id})">
-                                <i class="bi bi-trash"></i>
-                            </button>
-                        </div>
+                        <h6 class="mb-1 fw-bold" style="font-size: 0.95rem;">${item.name}</h6>
+                        <p class="text-primary fw-bold mb-0" style="font-size: 0.9rem;">
+                            Rp ${parseInt(item.price).toLocaleString('id-ID')}
+                        </p>
                     </div>
+
+                    <button class="btn btn-sm text-danger" onclick="cart.removeItem(${item.id})" title="Hapus">
+                        <i class="bi bi-trash fs-5"></i>
+                    </button>
                 </div>
             </div>
         `).join('');
-        
-        if (this.cartTotal) {
-            this.cartTotal.textContent = `Rp ${parseInt(total).toLocaleString('id-ID')}`;
-        }
     }
     
     async addToCart(productId) {
@@ -129,11 +120,13 @@ class CartManager {
             const data = await response.json();
             
             if (data.success) {
-                this.showToast('Produk ditambahkan ke keranjang', 'success');
+                this.showToast(data.message || 'Ditambahkan ke Favorit', 'success'); // Gunakan pesan dari backend
                 this.updateCartCount();
-                this.openCart();
+                // Opsional: Buka drawer otomatis saat dilike
+                // this.openCart(); 
             } else {
-                this.showToast(data.message || 'Gagal menambahkan ke keranjang', 'error');
+                // Jika gagal (misal sudah ada), tetap tampilkan toast tapi mungkin warning/info
+                this.showToast(data.message || 'Gagal menambahkan', 'error');
             }
         } catch (error) {
             console.error('Error adding to cart:', error);
@@ -141,32 +134,10 @@ class CartManager {
         }
     }
     
-    async updateQuantity(cartId, quantity) {
-        if (quantity < 1) {
-            this.removeItem(cartId);
-            return;
-        }
-        
-        try {
-            const response = await fetch(`${BASE_URL}/ajax/update-cart.php`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ cart_id: cartId, quantity })
-            });
-            
-            const data = await response.json();
-            
-            if (data.success) {
-                this.loadCart();
-                this.updateCartCount();
-            }
-        } catch (error) {
-            console.error('Error updating cart:', error);
-        }
-    }
+    // Fungsi Update Quantity DIHAPUS karena tidak dipakai lagi di Wishlist
     
     async removeItem(cartId) {
-        if (!confirm('Hapus item dari keranjang?')) return;
+        if (!confirm('Hapus dari daftar disukai?')) return;
         
         try {
             const response = await fetch(`${BASE_URL}/ajax/remove-from-cart.php`, {
@@ -180,7 +151,7 @@ class CartManager {
             if (data.success) {
                 this.loadCart();
                 this.updateCartCount();
-                this.showToast('Item dihapus', 'success');
+                this.showToast('Dihapus dari favorit', 'success');
             }
         } catch (error) {
             console.error('Error removing item:', error);
@@ -192,11 +163,13 @@ class CartManager {
             const response = await fetch(`${BASE_URL}/ajax/get-cart-count.php`);
             const data = await response.json();
             
-            if (this.cartCount && data.count > 0) {
-                this.cartCount.textContent = data.count;
-                this.cartCount.style.display = 'inline-block';
-            } else if (this.cartCount) {
-                this.cartCount.style.display = 'none';
+            if (this.cartCount) {
+                if (data.count > 0) {
+                    this.cartCount.textContent = data.count;
+                    this.cartCount.style.display = 'inline-block';
+                } else {
+                    this.cartCount.style.display = 'none';
+                }
             }
         } catch (error) {
             console.error('Error updating cart count:', error);
@@ -204,17 +177,32 @@ class CartManager {
     }
     
     showToast(message, type = 'success') {
+        // Hapus toast lama jika ada agar tidak menumpuk
+        const oldToast = document.querySelector('.toast-modern');
+        if(oldToast) oldToast.remove();
+
         const toast = document.createElement('div');
         toast.className = 'toast-modern';
+        // Warna icon disesuaikan
+        const iconClass = type === 'success' ? 'bi-check-circle-fill text-success' : 'bi-info-circle-fill text-warning';
+        
         toast.innerHTML = `
-            <i class="bi bi-${type === 'success' ? 'check-circle-fill text-success' : 'x-circle-fill text-danger'}"></i>
-            <span>${message}</span>
+            <i class="bi ${iconClass} fs-5"></i>
+            <span class="fw-medium">${message}</span>
         `;
         
         document.body.appendChild(toast);
         
+        // Animasi Masuk
+        requestAnimationFrame(() => {
+            toast.style.transform = 'translateX(0)';
+            toast.style.opacity = '1';
+        });
+        
         setTimeout(() => {
-            toast.style.animation = 'slideInRight 0.3s ease reverse';
+            toast.style.transition = 'all 0.3s ease';
+            toast.style.transform = 'translateX(100%)';
+            toast.style.opacity = '0';
             setTimeout(() => toast.remove(), 300);
         }, 3000);
     }
@@ -278,14 +266,4 @@ document.querySelectorAll('form').forEach(form => {
     });
 });
 
-// === PRODUCT FILTER (for products page) ===
-const filterButtons = document.querySelectorAll('.filter-btn');
-filterButtons.forEach(btn => {
-    btn.addEventListener('click', () => {
-        const category = btn.dataset.category;
-        window.location.href = `${BASE_URL}/pages/products.php?category=${encodeURIComponent(category)}`;
-    });
-});
-
-console.log('🎨 Thrift & Swap - Modern UI Loaded');
-console.log('✨ Dark Mode: ' + (html.getAttribute('data-theme') === 'dark' ? 'ON' : 'OFF'));
+console.log('🎨 Thrift & Swap - Wishlist Mode Active');

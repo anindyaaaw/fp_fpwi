@@ -16,7 +16,7 @@ if (getenv('RAILWAY_ENVIRONMENT')) {
     
 } else {
     // --- KONFIGURASI LOCALHOST (XAMPP) ---
-    define('DB_HOST', 'localhost');
+    define('DB_HOST', 'localhost:3307');
     define('DB_USER', 'root');
     define('DB_PASS', '');
     define('DB_NAME', 'fp_pwi');

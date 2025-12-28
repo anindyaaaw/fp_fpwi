@@ -22,21 +22,12 @@
                 </ul>
             </div>
             
-            <div class="col-md-4 mb-4">
-                <h6 class="mb-3">Bantuan</h6>
-                <ul class="list-unstyled">
-                    <li class="mb-2"><a href="#" class="text-white-50 text-decoration-none">Cara Berbelanja</a></li>
-                    <li class="mb-2"><a href="#" class="text-white-50 text-decoration-none">Cara Berjualan</a></li>
-                    <li class="mb-2"><a href="#" class="text-white-50 text-decoration-none">Syarat & Ketentuan</a></li>
-                    <li class="mb-2"><a href="#" class="text-white-50 text-decoration-none">Kebijakan Privasi</a></li>
-                </ul>
-            </div>
         </div>
         
         <hr class="border-secondary">
         
         <div class="text-center text-white-50">
-            <small>&copy; 2024 Thrift & Swap. All rights reserved. Made by Anin, Rilla, and Jeje</small>
+            <small>&copy; 2025 Thrift & Swap. All rights reserved. Made by Anin, Rilla, and Jeje</small>
         </div>
     </div>
 </footer>

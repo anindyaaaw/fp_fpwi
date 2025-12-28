@@ -72,7 +72,7 @@ include '../includes/header.php';
 
     <div class="row g-4 mb-4">
         <div class="col-md-4">
-            <div class="card border-0 shadow-sm rounded-4 bg-primary text-white h-100">
+            <div class="card border-0 shadow-sm rounded-4 bg-danger text-white h-100">
                 <div class="card-body p-4">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
