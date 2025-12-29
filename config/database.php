@@ -1,71 +1,87 @@
 <?php
 // === config/database.php ===
 
-// Cek apakah kode dijalankan di Railway (Environment Production)
-if (getenv('RAILWAY_ENVIRONMENT')) {
-    // --- KONFIGURASI RAILWAY (Otomatis) ---
+// 1. DETEKSI ENVIRONMENT (Railway vs Localhost)
+// Kita cek apakah ada variabel MYSQLHOST yang otomatis disediakan Railway
+if (getenv('MYSQLHOST')) {
+    // --- KONFIGURASI RAILWAY (PRODUCTION) ---
     define('DB_HOST', getenv('MYSQLHOST'));
     define('DB_USER', getenv('MYSQLUSER'));
     define('DB_PASS', getenv('MYSQLPASSWORD'));
     define('DB_NAME', getenv('MYSQLDATABASE'));
     define('DB_PORT', getenv('MYSQLPORT'));
     
-    // URL Railway (Otomatis ambil domain dari Railway)
-    // Nanti di Railway Dashboard kamu harus set variable: PUBLIC_URL
-    define('BASE_URL', getenv('PUBLIC_URL')); 
-    
+    // Base URL dari Environment Variable APP_URL di Railway
+    // Jika belum diset, fallback ke domain Railway default
+    $railway_url = getenv('RAILWAY_STATIC_URL') ? 'https://' . getenv('RAILWAY_STATIC_URL') : '';
+    define('BASE_URL', getenv('APP_URL') ? getenv('APP_URL') : $railway_url);
+
 } else {
-    // --- KONFIGURASI LOCALHOST (XAMPP) ---
-    define('DB_HOST', 'localhost:3307');
+    // --- KONFIGURASI LOCALHOST (DEVELOPMENT) ---
+    define('DB_HOST', 'localhost');
     define('DB_USER', 'root');
     define('DB_PASS', '');
-    define('DB_NAME', 'fp_pwi');
+    define('DB_NAME', 'fp_pwi'); // <--- Pastikan ini sesuai nama DB di phpMyAdmin kamu
+    define('DB_PORT', 3306);
     
-    // URL Localhost (Sesuai folder kamu sekarang)
+    // URL Localhost
     define('BASE_URL', 'http://localhost/fp_pwi');
 }
 
-// Create connection
+// 2. KONEKSI KE DATABASE
 try {
-    // Khusus Railway kadang butuh Port, jadi kita tambahkan
     $port = defined('DB_PORT') ? (int)DB_PORT : 3306;
-    
     $conn = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME, $port);
     
     if ($conn->connect_error) {
-        throw new Exception("Connection failed: " . $conn->connect_error);
+        throw new Exception("Koneksi Gagal: " . $conn->connect_error);
     }
     
+    // Set charset agar emoji dan simbol aman
     $conn->set_charset("utf8mb4");
     
 } catch (Exception $e) {
-    // Tampilkan error tapi jangan terlalu detail di production
-    die("Database Error. Silakan cek koneksi.");
+    // Tampilkan error (Matikan die() ini jika sudah live production agar user tidak lihat error teknis)
+    die("Database Error: " . $e->getMessage());
 }
 
-// Session configuration
+// 3. SESSION MANAGEMENT
+// Wajib ada agar Login dan Keranjang berfungsi
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Helper functions (Tidak Berubah)
+// 4. HELPER FUNCTIONS (Wajib ada untuk fitur Website kamu)
+
+// Fungsi untuk query database yang aman (Prepared Statement)
 function db_query($query, $params = [], $types = "") {
     global $conn;
     $stmt = $conn->prepare($query);
     if (!$stmt) die("Prepare failed: " . $conn->error);
-    if (!empty($params)) $stmt->bind_param($types, ...$params);
+    
+    if (!empty($params)) {
+        // Jika types kosong, otomatis generate (s = string, i = integer)
+        if (empty($types)) {
+            $types = str_repeat('s', count($params)); 
+        }
+        $stmt->bind_param($types, ...$params);
+    }
+    
     $stmt->execute();
     return $stmt;
 }
 
+// Cek status login
 function is_logged_in() {
     return isset($_SESSION['user_id']);
 }
 
+// Ambil role user (admin/user)
 function get_user_role() {
-    return $_SESSION['user_role'] ?? null;
+    return $_SESSION['role'] ?? null; // Pastikan di tabel users kolomnya 'role'
 }
 
+// Paksa harus login
 function require_login() {
     if (!is_logged_in()) {
         header('Location: ' . BASE_URL . '/auth/login.php');
@@ -73,6 +89,7 @@ function require_login() {
     }
 }
 
+// Paksa harus role tertentu (misal admin)
 function require_role($role) {
     require_login();
     if (get_user_role() !== $role) {
